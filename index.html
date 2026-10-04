@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Misi Ayat Tunggal: SIAPA, BUAT APA, APA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1230; --card:#141D45; --card2:#1B2760; --ink:#F3F6FF; --muted:#9FAAD6; --line:#2C3A7A;
+  --accent:#FF8A00;
+  --siapa:#5B9BFF; --siapa-bg:rgba(91,155,255,.18);
+  --buat:#FFB020;  --buat-bg:rgba(255,176,32,.18);
+  --apa:#35D39A;   --apa-bg:rgba(53,211,154,.18);
+  --bad:#FF5A67;   --bad-bg:rgba(255,90,103,.18);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:"Baloo 2","Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  color:var(--ink); min-height:100vh; display:flex; justify-content:center; padding:18px 16px 40px;
+  background:
+    radial-gradient(900px 500px at 15% -10%, #2a1f6b 0%, transparent 60%),
+    radial-gradient(800px 500px at 100% 110%, #0f4a6b 0%, transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+}
+/* Latar misi: grid halus + enam orb tenaga unsur */
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.35;
+  background-image:linear-gradient(rgba(120,140,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(120,140,255,.12) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%);
+  mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%);
+}
+.orb{position:fixed; border-radius:50%; filter:blur(55px); opacity:.38; z-index:0; pointer-events:none; animation:drift 16s ease-in-out infinite alternate}
+.o1{width:260px;height:260px;left:-60px;top:8%;background:#FFD60A}
+.o2{width:220px;height:220px;right:-50px;top:18%;background:#FF4D2E;animation-delay:-4s}
+.o3{width:280px;height:280px;left:10%;bottom:-90px;background:#2EA8FF;animation-delay:-8s}
+.o4{width:200px;height:200px;right:12%;bottom:6%;background:#3DDC84;animation-delay:-2s}
+.o5{width:180px;height:180px;left:45%;top:-70px;background:#B58CFF;animation-delay:-6s}
+.o6{width:200px;height:200px;left:-40px;bottom:35%;background:#A9733E;animation-delay:-10s}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,-30px) scale(1.12)}}
+
+main{width:100%; max-width:640px; position:relative; z-index:1}
+header{margin-bottom:12px}
+.titlebar{display:flex; align-items:center; justify-content:space-between; gap:10px}
+h1{font-size:1.5rem; font-weight:800; margin:0; color:var(--accent); display:flex; align-items:center; gap:8px; text-shadow:0 2px 0 #7a3b00}
+h1 svg{width:26px;height:26px;flex:none}
+.sub{margin:0 0 10px; color:var(--muted); font-size:.95rem}
+.toggles{display:flex; gap:6px}
+.tg{
+  font:inherit; font-size:.8rem; font-weight:700; color:var(--ink); background:var(--card);
+  border:2px solid var(--line); border-radius:999px; padding:2px 10px; cursor:pointer;
+}
+.tg[aria-pressed="false"]{color:var(--muted); text-decoration:line-through; opacity:.8}
+.stats{display:flex; gap:8px; font-weight:700; font-size:.95rem; flex-wrap:wrap}
+.stat{background:var(--card); border:2px solid var(--line); border-radius:999px; padding:2px 12px}
+.stat.power{border-color:var(--accent); color:var(--accent)}
+.bar{height:12px; background:var(--card); border:2px solid var(--line); border-radius:999px; overflow:hidden; margin:12px 0 16px}
+.bar span{display:block; height:100%; width:0; background:linear-gradient(90deg,#FFB020,#FF8A00); border-radius:999px; transition:width .3s}
+.card{background:rgba(20,29,69,.92); border:2px solid var(--line); border-radius:22px; padding:22px 20px; backdrop-filter:blur(4px)}
+.mission{margin:0 0 6px; color:var(--muted); font-weight:700; font-size:.95rem}
+.sentence{
+  font-size:clamp(1.9rem,7vw,2.8rem); font-weight:800; line-height:1.25;
+  display:flex; flex-wrap:wrap; gap:6px 10px; margin:0 0 6px;
+}
+.part{padding:0 10px; border-radius:12px; border:3px solid transparent; transition:background .25s,border-color .25s}
+.part small{display:block; font-size:.7rem; font-weight:700; line-height:1; height:0; opacity:0; overflow:hidden; transition:opacity .25s,height .25s}
+.revealed .part small{height:auto; opacity:1; padding-bottom:4px}
+.part.siapa.on{background:var(--siapa-bg); border-color:var(--siapa); color:var(--siapa)}
+.part.buat.on{background:var(--buat-bg); border-color:var(--buat); color:var(--buat)}
+.part.apa.on{background:var(--apa-bg); border-color:var(--apa); color:var(--apa)}
+.ask{font-size:1.15rem; color:var(--muted); margin:10px 0 16px; font-weight:500}
+.ask b{font-weight:800; padding:1px 10px; border-radius:8px}
+.ask b.siapa{background:var(--siapa-bg); color:var(--siapa)}
+.ask b.buat{background:var(--buat-bg); color:var(--buat)}
+.ask b.apa{background:var(--apa-bg); color:var(--apa)}
+.options{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.opt{
+  font:inherit; font-size:1.3rem; font-weight:700; color:var(--ink);
+  background:var(--card2); border:3px solid var(--line); border-radius:16px;
+  padding:14px 10px; cursor:pointer; min-height:64px; text-align:center;
+  transition:transform .08s, border-color .15s, background .15s;
+}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:active:not(:disabled){transform:scale(.97)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--apa-bg); border-color:var(--apa); color:var(--apa)}
+.opt.wrong{background:var(--bad-bg); border-color:var(--bad); color:var(--bad)}
+.opt.dim{opacity:.5}
+:focus-visible{outline:4px solid #fff; outline-offset:3px}
+.feedback{min-height:1.8em; margin:14px 0 0; font-size:1.2rem; font-weight:700}
+.feedback.good{color:var(--apa)} .feedback.bad{color:var(--bad)}
+.btn{
+  font:inherit; font-weight:800; font-size:1.25rem; color:#2a1400; background:var(--accent);
+  border:0; border-radius:16px; padding:12px 28px; cursor:pointer; box-shadow:0 4px 0 #a85a00;
+}
+.btn:active{transform:translateY(2px); box-shadow:0 2px 0 #a85a00}
+.next{display:none; margin-top:10px}
+.next.show{display:inline-block}
+.center{text-align:center}
+.intro h2{font-size:1.8rem; margin:0 0 8px; color:var(--accent)}
+.intro p{font-size:1.1rem; margin:0 0 16px; color:var(--ink)}
+.chips{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:0 0 18px}
+.chips span{padding:2px 14px; border-radius:999px; font-weight:800; border:2px solid}
+.chips .siapa{color:var(--siapa);border-color:var(--siapa);background:var(--siapa-bg)}
+.chips .buat{color:var(--buat);border-color:var(--buat);background:var(--buat-bg)}
+.chips .apa{color:var(--apa);border-color:var(--apa);background:var(--apa-bg)}
+.end .big{font-size:3.4rem; font-weight:800; margin:0; color:var(--accent)}
+.end .rank{font-size:1.4rem; font-weight:800; margin:0 0 4px}
+.end p{margin:4px 0 14px; font-size:1.1rem}
+.hint{color:var(--muted); font-size:.85rem; text-align:center; margin-top:14px}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.opt.wrong{animation:shake .25s}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+@media (max-width:420px){.options{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<div class="orb o4"></div><div class="orb o5"></div><div class="orb o6"></div>
+
+<main>
+  <header>
+    <div class="titlebar">
+      <h1>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 1 4 13.5h6L8.5 23 20 9.5h-6.5L13.5 1z" fill="#FFD60A" stroke="#7a3b00" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        Misi Ayat Tunggal
+      </h1>
+      <div class="toggles">
+        <button class="tg" id="tgMusic" aria-pressed="true">Muzik</button>
+        <button class="tg" id="tgSfx" aria-pressed="true">Bunyi</button>
+      </div>
+    </div>
+    <div class="stats" aria-live="polite">
+      <span class="stat power" id="score">Kuasa 0</span>
+      <span class="stat" id="streak">Berturut 0</span>
+      <span class="stat" id="mnum">Misi 0 / 0</span>
+    </div>
+  </header>
+  <div class="bar" role="progressbar" aria-label="Kemajuan misi" id="barWrap"><span id="bar"></span></div>
+  <section class="card" id="card"></section>
+  <p class="hint">Tekan kekunci 1 hingga 4 untuk memilih jawapan, Enter untuk soalan seterusnya.</p>
+</main>
+
+<script>
+/* ===== UBAH SOALAN DI SINI =====
+   Setiap ayat ada tiga bahagian: [SIAPA, BUAT APA, APA]. */
+const SENTENCES = [
+  ["Ali", "membaca", "buku"],
+  ["Siti", "menyiram", "bunga"],
+  ["Amir", "menendang", "bola"],
+  ["Aina", "membasuh", "pinggan"],
+  ["Kumar", "menunggang", "basikal"],
+  ["Mei Ling", "melukis", "gambar"],
+  ["Hafiz", "memakan", "epal"],
+];
+
+/* ===== FAIL BUNYI SENDIRI (pilihan) =====
+   Biarkan kosong "" untuk guna bunyi asal yang dijana oleh pelayar.
+   Letak fail mp3 di folder yang sama, contoh: music: "muzik.mp3" */
+const SOUND_FILES = { music: "", benar: "", salah: "" };
+/* ======================================== */
+
+const CATS = [
+  {key:"siapa", label:"SIAPA"},
+  {key:"buat",  label:"BUAT APA"},
+  {key:"apa",   label:"APA"},
+];
+
+/* ---------- Bunyi ---------- */
+const Snd = (() => {
+  let ctx=null, mus, sfx, master, noiseBuf, timer=null, step=0, nextT=0, fileMusic=null;
+  let musicOn=true, sfxOn=true, musicRunning=false;
+  const hz = m => 440*Math.pow(2,(m-69)/12);
+  const CH  = [[57,60,64],[53,57,60],[55,59,62],[52,55,59]];   // Am F G Em
+  const ARP = [0,1,2,1,2,1,0,2];
+  const SPB = 60/138/2;
+
+  function init(){
+    if (ctx) return;
+    const C = window.AudioContext || window.webkitAudioContext;
+    if (!C) return;
+    ctx = new C();
+    master = ctx.createGain(); master.connect(ctx.destination);
+    mus = ctx.createGain(); mus.gain.value = .45; mus.connect(master);
+    sfx = ctx.createGain(); sfx.gain.value = .9;  sfx.connect(master);
+    noiseBuf = ctx.createBuffer(1, ctx.sampleRate*0.1, ctx.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i=0;i<d.length;i++) d[i] = Math.random()*2-1;
+  }
+  function tone(f,t,d,type,v,dest,f2){
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.type=type; o.frequency.setValueAtTime(f,t);
+    if (f2) o.frequency.exponentialRampToValueAtTime(f2,t+d);
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(v,t+.01);
+    g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g); g.connect(dest); o.start(t); o.stop(t+d+.03);
+  }
+  function hat(t,v,dest){
+    const s=ctx.createBufferSource(), g=ctx.createGain(), f=ctx.createBiquadFilter();
+    s.buffer=noiseBuf; f.type="highpass"; f.frequency.value=6000;
+    g.gain.setValueAtTime(v,t); g.gain.exponentialRampToValueAtTime(.0001,t+.05);
+    s.connect(f); f.connect(g); g.connect(dest); s.start(t); s.stop(t+.06);
+  }
+  function playStep(s,t){
+    const bar=Math.floor(s/8), i=s%8, ch=CH[bar];
+    if (i%2===0) tone(hz(ch[0]-12),t,SPB*1.8,"triangle",.5,mus);
+    tone(hz(ch[ARP[i]]+12),t,SPB*.9,"square",.08,mus);
+    if (i===0||i===4) tone(150,t,.14,"sine",.6,mus,45);
+    if (i%2===1) hat(t,.12,mus);
+    if (bar%2===1 && i===6) tone(hz(ch[2]+24),t,SPB,"square",.06,mus);
+  }
+  function sched(){
+    while (nextT < ctx.currentTime + .25){ playStep(step,nextT); nextT += SPB; step=(step+1)%32; }
+  }
+  function startMusic(){
+    if (!musicOn || musicRunning) return;
+    musicRunning = true;
+    if (SOUND_FILES.music){
+      if (!fileMusic){ fileMusic = new Audio(SOUND_FILES.music); fileMusic.loop = true; fileMusic.volume = .4; }
+      fileMusic.play().catch(()=>{});
+      return;
+    }
+    if (!ctx) return;
+    if (ctx.state==="suspended") ctx.resume();
+    nextT = ctx.currentTime + .05;
+    timer = setInterval(sched, 90);
+  }
+  function stopMusic(){
+    musicRunning = false;
+    if (fileMusic) fileMusic.pause();
+    if (timer){ clearInterval(timer); timer=null; }
+  }
+  function fileSfx(src){ const a=new Audio(src); a.play().catch(()=>{}); }
+
+  return {
+    unlock(){ init(); if (ctx && ctx.state==="suspended") ctx.resume(); startMusic(); },
+    setMusic(on){ musicOn=on; on ? startMusic() : stopMusic(); },
+    setSfx(on){ sfxOn=on; if(!on && window.speechSynthesis) speechSynthesis.cancel(); },
+    pause(){ if (timer){ clearInterval(timer); timer=null; } if (fileMusic) fileMusic.pause(); if (ctx) ctx.suspend(); },
+    resume(){ if (ctx) ctx.resume(); if (musicOn && musicRunning){ if (fileMusic) fileMusic.play().catch(()=>{}); else if(!timer && ctx){ nextT=ctx.currentTime+.05; timer=setInterval(sched,90);} } },
+    benar(){
+      if (!sfxOn) return;
+      if (SOUND_FILES.benar) return fileSfx(SOUND_FILES.benar);
+      if (!ctx) return;
+      const t=ctx.currentTime;
+      tone(1320,t,.07,"triangle",.5,sfx);
+      tone(1976,t+.07,.12,"triangle",.5,sfx);
+    },
+    salah(){
+      if (!sfxOn) return;
+      if (SOUND_FILES.salah) return fileSfx(SOUND_FILES.salah);
+      if (ctx){
+        const t=ctx.currentTime;
+        tone(220,t,.3,"sawtooth",.35,sfx,110);
+        tone(165,t+.12,.3,"sawtooth",.3,sfx,80);
+      }
+      try{
+        if (window.speechSynthesis){
+          const u=new SpeechSynthesisUtterance("Salah");
+          u.lang="ms-MY"; u.rate=.9; u.pitch=.8; u.volume=1;
+          setTimeout(()=>speechSynthesis.speak(u), 260);
+        }
+      }catch(e){}
+    }
+  };
+})();
+
+/* ---------- Permainan ---------- */
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+
+function buildQuestions(){
+  const qs=[];
+  SENTENCES.forEach((s,i)=>{
+    for (let c=0;c<3;c++){
+      const others=[0,1,2].filter(k=>k!==c).map(k=>s[k]);
+      const extra=SENTENCES[(i+1)%SENTENCES.length][(c+1)%3];
+      qs.push({sIdx:i, cat:c, correct:s[c], options:shuffle([s[c],...others,extra])});
+    }
+  });
+  return shuffle(qs);
+}
+
+let Q=[], n=0, score=0, streak=0, rightCount=0, locked=true, playing=false;
+const $ = id => document.getElementById(id);
+const card = $("card");
+
+function updateStats(){
+  $("score").textContent  = "Kuasa " + score;
+  $("streak").textContent = "Berturut " + streak;
+  $("mnum").textContent   = "Misi " + Math.min(n+1, Q.length || 0) + " / " + (Q.length || 0);
+  const pct = Q.length ? n/Q.length*100 : 0;
+  $("bar").style.width = pct + "%";
+  $("barWrap").setAttribute("aria-valuenow", Math.round(pct));
+}
+
+function intro(){
+  playing=false; locked=true; Q=buildQuestions(); n=0; score=0; streak=0; rightCount=0;
+  updateStats();
+  card.innerHTML = `
+    <div class="intro center">
+      <h2>Bersedia untuk misi?</h2>
+      <p>Baca setiap ayat dan pilih perkataan yang betul untuk kumpul kuasa unsur.</p>
+      <div class="chips"><span class="siapa">SIAPA</span><span class="buat">BUAT APA</span><span class="apa">APA</span></div>
+      <button class="btn" id="go">Mulakan misi</button>
+    </div>`;
+  $("go").addEventListener("click", () => { Snd.unlock(); playing=true; show(); });
+  $("go").focus();
+}
+
+function show(){
+  updateStats();
+  if (n>=Q.length) return finish();
+  locked=false;
+  const q=Q[n], s=SENTENCES[q.sIdx], cat=CATS[q.cat];
+  card.innerHTML = `
+    <p class="mission">Misi ${n+1}</p>
+    <p class="sentence" id="sentence">${s.map((w,i)=>`<span class="part ${CATS[i].key}"><small>${CATS[i].label}</small>${w}</span>`).join("")}</p>
+    <p class="ask">Pilih perkataan yang mewakili <b class="${cat.key}">${cat.label}</b></p>
+    <div class="options">
+      ${q.options.map((o,i)=>`<button class="opt" data-v="${o}"><span aria-hidden="true">${i+1}. </span>${o}</button>`).join("")}
+    </div>
+    <p class="feedback" id="fb" aria-live="assertive"></p>
+    <button class="btn next" id="next">${n===Q.length-1 ? "Lihat keputusan" : "Misi seterusnya"}</button>`;
+  card.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>answer(b)));
+  $("next").addEventListener("click",()=>{ n++; show(); });
+}
+
+function answer(btn){
+  if (locked) return;
+  locked=true;
+  const q=Q[n], ok=btn.dataset.v===q.correct;
+  card.querySelectorAll(".opt").forEach(b=>{
+    b.disabled=true;
+    if (b.dataset.v===q.correct) b.classList.add("right");
+    else if (b===btn) b.classList.add("wrong");
+    else b.classList.add("dim");
+  });
+  if (ok){ score+=10+Math.min(streak,5)*2; streak++; rightCount++; Snd.benar(); }
+  else   { streak=0; Snd.salah(); }
+  $("sentence").classList.add("revealed");
+  $("sentence").querySelectorAll(".part").forEach(p=>p.classList.add("on"));
+  const fb=$("fb");
+  fb.className="feedback "+(ok?"good":"bad");
+  fb.textContent = ok
+    ? (streak>=3 ? `Betul! Kuasa unsur x${streak}!` : "Betul! Kuasa bertambah!")
+    : `Belum tepat. ${CATS[q.cat].label} ialah "${q.correct}".`;
+  const nx=$("next"); nx.classList.add("show"); nx.focus();
+  $("score").textContent="Kuasa "+score;
+  $("streak").textContent="Berturut "+streak;
+}
+
+function finish(){
+  const pct=Math.round(rightCount/Q.length*100);
+  const rank = pct>=90 ? "Wira Unsur Sejati" : pct>=60 ? "Pahlawan Unsur" : "Pelatih Unsur";
+  $("bar").style.width="100%";
+  $("mnum").textContent="Misi tamat";
+  card.innerHTML = `
+    <div class="end center">
+      <p class="rank">${rank}</p>
+      <p class="big">${score}</p>
+      <p>Kuasa terkumpul. Betul ${rightCount} daripada ${Q.length} soalan.</p>
+      <button class="btn" id="again">Main lagi</button>
+    </div>`;
+  $("again").addEventListener("click",()=>{ playing=true; Q=buildQuestions(); n=0; score=0; streak=0; rightCount=0; show(); });
+  $("again").focus();
+}
+
+/* ---------- Kawalan ---------- */
+$("tgMusic").addEventListener("click", e=>{
+  const on = e.currentTarget.getAttribute("aria-pressed")!=="true";
+  e.currentTarget.setAttribute("aria-pressed", on);
+  if (on) Snd.unlock();
+  Snd.setMusic(on);
+});
+$("tgSfx").addEventListener("click", e=>{
+  const on = e.currentTarget.getAttribute("aria-pressed")!=="true";
+  e.currentTarget.setAttribute("aria-pressed", on);
+  Snd.setSfx(on);
+});
+document.addEventListener("keydown", e=>{
+  if (!playing || locked || n>=Q.length) return;
+  if (e.key>="1" && e.key<="4"){
+    const b=card.querySelectorAll(".opt")[Number(e.key)-1]; if (b) answer(b);
+  }
+});
+document.addEventListener("visibilitychange", ()=> document.hidden ? Snd.pause() : Snd.resume());
+
+intro();
+</script>
+</body>
+</html>
